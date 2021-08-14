@@ -1,8 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-
-import 'Apidata/Apidata.dart';
-import 'Apidata/apidataimport.dart';
-
+import 'package:http/http.dart' as http;
 void main() {
   runApp(MyApp());
 }
@@ -30,16 +28,20 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  Aipdata _aipdata = new Aipdata();
-  _getData() async {
-    await Apidataimport.getdetails().then((value) => setState(() {
-          _aipdata = value;
-        }));
+  
+  static Map<String, dynamic> _apidata = {};
+  //This is the function to get the details from the api
+  Future _getApiDetails() async {
+    var response =
+        await http.get(Uri.parse(("https://www.boredapi.com/api/activity")));
+    var jsonData = jsonDecode(response.body);
+    _apidata = jsonData;
+    return _apidata;
   }
 
   @override
   void initState() {
-    _getData();
+    _getApiDetails();
     super.initState();
   }
 
@@ -49,12 +51,25 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           title: Text(widget.title),
         ),
-        body: Center(
-          // ignore: unnecessary_null_comparison
-          child: _aipdata.activity == ""
-              ? CircularProgressIndicator()
-              : Text(_aipdata.activity),
-        ) // This trailing comma makes auto-formatting nicer for build methods.
-        );
+        body: FutureBuilder(
+          future: _getApiDetails(),
+          builder: (context, snapShot) {
+            if (snapShot.data == null) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            } else {
+              return ListView.builder(
+                  itemCount: _apidata.length,
+                  itemBuilder: (context, i) {
+                    return ListTile(
+                      title: Text(_apidata['activity']),
+                      subtitle: Text("Subtitle"),
+                      leading: Text("Leading"),
+                    );
+                  });
+            }
+          },
+        ));
   }
 }
