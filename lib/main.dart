@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+
 void main() {
   runApp(MyApp());
 }
@@ -28,7 +29,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  
   static Map<String, dynamic> _apidata = {};
   //This is the function to get the details from the api
   Future _getApiDetails() async {
@@ -41,35 +41,44 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    _getApiDetails();//calling this function everytime this page is built.
+    _getApiDetails(); //calling this function everytime this page is built.
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-        ),
-        body: FutureBuilder(
-          future: _getApiDetails(),
-          builder: (context, snapShot) {
-            if (snapShot.data == null) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            } else {
-              return ListView.builder(
-                  itemCount: _apidata.length,
-                  itemBuilder: (context, i) {
-                    return ListTile(
-                      title: Text(_apidata['activity']),
-                      subtitle: Text(_apidata['participants']),
-                      leading: Text(_apidata['participants']),
-                    );
-                  });
-            }
-          },
-        ));
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body: Column(
+        children: <Widget>[
+          FutureBuilder(
+            future: _getApiDetails(),
+            builder: (context, snapShot) {
+              if (snapShot.data == null) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else {
+                return ListTile(
+                  title: Text(_apidata['activity'].toString()),
+                  subtitle: Text(_apidata['participants'].toString()),
+                  leading: Text(_apidata['participants'].toString()),
+                );
+              }
+            },
+          ),
+          IconButton(
+            onPressed: () {
+             setState(() {
+                _getApiDetails();
+             });
+            },
+            icon: Icon(Icons.refresh),
+          ),
+        ],
+      ),
+    );
   }
 }
