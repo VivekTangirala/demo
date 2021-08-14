@@ -41,7 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    _getApiDetails();
+    _getApiDetails();//calling this function everytime this page is built.
     super.initState();
   }
 
@@ -64,8 +64,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   itemBuilder: (context, i) {
                     return ListTile(
                       title: Text(_apidata['activity']),
-                      subtitle: Text("Subtitle"),
-                      leading: Text("Leading"),
+                      subtitle: Text(_apidata['participants']),
+                      leading: Text(_apidata['participants']),
                     );
                   });
             }
